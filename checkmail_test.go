@@ -1,9 +1,8 @@
-package checkmail_test
+package checkmail
 
 import (
 	"testing"
-
-	"github.com/badoux/checkmail"
+	"time"
 )
 
 var (
@@ -23,10 +22,30 @@ var (
 		{mail: " test@gmail.com", format: false, account: false},
 		{mail: "test@wrong domain.com", format: false, account: false},
 		{mail: "é&ààà@gmail.com", format: false, account: false},
-		{mail: "admin@jalopyjournal.com", format: true, account: true},
-		{mail: "admin@busyboo.com", format: true, account: true},
+		{mail: "admin@jalopyjournal.com", format: true, account: false},
+		{mail: "admin@busyboo.com", format: true, account: false},
 	}
+
+	checker = NewChecker(
+		FromHost("checkmail.me"),
+		FromEmail("lansome-cowboy@gmail.com"),
+		Timeout(5*time.Second),
+	)
 )
+
+func TestInitialize(t *testing.T) {
+	if checker.FromEmail() != "lansome-cowboy@gmail.com" {
+		t.Fatal(checker.FromEmail())
+	}
+
+	if checker.FromHost() != "checkmail.me" {
+		t.Fatal(checker.FromHost())
+	}
+
+	if checker.Timeout() != 5*time.Second {
+		t.Fatal(checker.Timeout())
+	}
+}
 
 func TestValidateHost(t *testing.T) {
 	for _, s := range samples {
@@ -34,7 +53,7 @@ func TestValidateHost(t *testing.T) {
 			continue
 		}
 
-		err := checkmail.ValidateHost(s.mail)
+		err := checker.ValidateHost(s.mail)
 		if err != nil && s.account == true {
 			t.Errorf(`"%s" => unexpected error: "%v"`, s.mail, err)
 		}
@@ -46,7 +65,7 @@ func TestValidateHost(t *testing.T) {
 
 func TestValidateFormat(t *testing.T) {
 	for _, s := range samples {
-		err := checkmail.ValidateFormat(s.mail)
+		err := checker.ValidateFormat(s.mail)
 		if err != nil && s.format == true {
 			t.Errorf(`"%s" => unexpected error: "%v"`, s.mail, err)
 		}
