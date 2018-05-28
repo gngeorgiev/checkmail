@@ -5,6 +5,11 @@ import (
 	"time"
 )
 
+const (
+	_FromHost  = "checkmail.me"
+	_FromEmail = "lansome-cowboy@gmail.com"
+)
+
 var (
 	samples = []struct {
 		mail    string
@@ -27,18 +32,18 @@ var (
 	}
 
 	checker = NewChecker(
-		FromHost("checkmail.me"),
-		FromEmail("lansome-cowboy@gmail.com"),
+		FromHost(_FromHost),
+		FromEmail(_FromEmail),
 		Timeout(5*time.Second),
 	)
 )
 
 func TestInitialize(t *testing.T) {
-	if checker.FromEmail() != "lansome-cowboy@gmail.com" {
+	if checker.FromEmail() != _FromEmail {
 		t.Fatal(checker.FromEmail())
 	}
 
-	if checker.FromHost() != "checkmail.me" {
+	if checker.FromHost() != _FromHost {
 		t.Fatal(checker.FromHost())
 	}
 

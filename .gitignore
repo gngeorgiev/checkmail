@@ -1,0 +1,4 @@
+cmd/cmd
+cmd/debug
+cmd/main
+.vscode
