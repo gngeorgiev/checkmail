@@ -113,7 +113,12 @@ func (c Checker) ValidateDNS(email string) ([]*net.MX, error) {
 
 func (c Checker) ValidateSMTP(email string, mx []*net.MX) error {
 	if len(mx) == 0 {
-		return ErrUnresolvableHost
+		_, host := split(email)
+		var err error
+		mx, err = net.LookupMX(host)
+		if err != nil {
+			return ErrUnresolvableHost
+		}
 	}
 
 	client, err := smtp.Dial(fmt.Sprintf("%s:%d", mx[0].Host, 25))
