@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"net"
 	"time"
 
 	"github.com/gngeorgiev/checkmail"
@@ -46,7 +47,14 @@ func main() {
 		return
 	}
 
-	if err := checker.ValidateHost(toFlag); err != nil {
+	var mx []*net.MX
+	var err error
+	if mx, err = checker.ValidateDNS(toFlag); err != nil {
+		fmt.Println(fmt.Sprintf("error validating dns %s", err))
+		return
+	}
+
+	if err := checker.ValidateSMTP(toFlag, mx); err != nil {
 		fmt.Println(fmt.Sprintf("error validating host %s", err))
 		return
 	}

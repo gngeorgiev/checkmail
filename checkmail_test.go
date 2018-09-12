@@ -58,7 +58,13 @@ func TestValidateHost(t *testing.T) {
 			continue
 		}
 
-		err := checker.ValidateHost(s.mail)
+		mx, err := checker.ValidateDNS(s.mail)
+		if err != nil && s.account == true {
+			t.Errorf(`"%s" => unexpected error: "%v"`, s.mail, err)
+			return
+		}
+
+		err = checker.ValidateSMTP(s.mail, mx)
 		if err != nil && s.account == true {
 			t.Errorf(`"%s" => unexpected error: "%v"`, s.mail, err)
 		}

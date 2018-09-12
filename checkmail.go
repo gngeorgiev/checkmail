@@ -101,10 +101,18 @@ func (c Checker) ValidateFormat(email string) error {
 	return nil
 }
 
-func (c Checker) ValidateHost(email string) error {
+func (c Checker) ValidateDNS(email string) ([]*net.MX, error) {
 	_, host := split(email)
 	mx, err := net.LookupMX(host)
 	if err != nil {
+		return nil, ErrUnresolvableHost
+	}
+
+	return mx, nil
+}
+
+func (c Checker) ValidateSMTP(email string, mx []*net.MX) error {
+	if len(mx) == 0 {
 		return ErrUnresolvableHost
 	}
 
